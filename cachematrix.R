@@ -5,38 +5,43 @@
 
 makeCacheMatrix <- function(x = matrix()) {
 
-  inv <- NULL
+  inv <- NULL    # cached inverse
 
+  # functions to get/set matrix
   set <- function(y) {
     if (!identical(x, y)) {
       x <<- y
       inv <<- NULL
     }
   }
-  
   get <- function() x
+  
+  # functions to get/set inverse
   setinverse <- function(inverse) inv <<- inverse
   getinverse <- function() inv
 
+  # return functions in a list
   list(set = set, get = get, setinverse = setinverse, getinverse = getinverse)
 
 }
 
 
 ## Calculates the inverse of the special "cache matrix" created with the above function. 
-## If the mean has already been calculated, it gets the inverse from the cache and skips the computation. 
+## If the inverse has already been calculated, it gets the inverse from the cache and skips the computation. 
 
 cacheSolve <- function(x, ...) {
 
-  inv <- x$getinverse()
+  inv <- x$getinverse()    # get cached inverse
   if (!is.null(inv)) {
     message("getting cached inverse")
     return(inv)
   }
+  # else need to compute inverse
   
   m <- x$get()
   inv <- solve(m, ...)
-  x$setinverse(inv)
+  
+  x$setinverse(inv)    # cache the computed inverse
   inv
   
 }
